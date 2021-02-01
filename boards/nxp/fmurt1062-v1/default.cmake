@@ -33,7 +33,7 @@ px4_add_board(
 		imu/invensense/icm20689
 		#imu/mpu6000 # legacy icm20602/icm20689 driver
 		irlock
-		lights/blinkm
+		#lights/blinkm
 		lights/rgbled
 		lights/rgbled_ncp5623c
 		lights/rgbled_pwm
