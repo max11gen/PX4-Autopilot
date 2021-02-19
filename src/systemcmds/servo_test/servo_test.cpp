@@ -210,23 +210,27 @@ void ServoTest::run()
 {
 	//int * pub_instance(nullptr);
 	vehicle_angular_acceleration_s accels;
-	actuator_controls_s actuators;
-	actuators.control[actuator_controls_s::INDEX_ROLL]=_roll;
-	actuators.control[actuator_controls_s::INDEX_PITCH]=_pitch;
-	actuators.control[actuator_controls_s::INDEX_YAW]=_yaw;
-	actuators.control[actuator_controls_s::INDEX_THROTTLE]=_thrust;
-	actuators.control[actuator_controls_s::INDEX_FLAPS]=0;
-	actuators.control[actuator_controls_s::INDEX_SPOILERS]=0;
-	actuators.control[actuator_controls_s::INDEX_AIRBRAKES]=0;
-	actuators.control[actuator_controls_s::INDEX_LANDING_GEAR]=0;
-	actuators.timestamp = hrt_absolute_time();
-	actuators.timestamp_sample= hrt_absolute_time();
-	orb_advert_t actuator_pub = orb_advertise(ORB_ID(actuator_controls_0),&actuators);
+	manual_control_setpoint_s setpoints;
+	setpoints.data_source=manual_control_setpoint_s::SOURCE_RC;
+	setpoints.x=_pitch;
+	setpoints.y=_roll;
+	setpoints.z=_thrust;
+	setpoints.r=_yaw;
+	setpoints.flaps=0;
+	setpoints.aux1=0;
+	setpoints.aux2=0;
+	setpoints.aux3=0;
+	setpoints.aux4=0;
+	setpoints.aux5=0;
+	setpoints.aux6=0;
+	setpoints.timestamp = hrt_absolute_time();
+	setpoints.timestamp_sample= hrt_absolute_time();
+	orb_advert_t manual_setpoint_pub = orb_advertise(ORB_ID(manual_control_setpoint),&setpoints);
 	while (!should_exit()) {
 		if(vhcl_ang_accel_sub.update(&accels)) {
-			actuators.timestamp=hrt_absolute_time();
-			actuators.timestamp_sample=hrt_absolute_time();
-			orb_publish(ORB_ID(actuator_controls_0),actuator_pub,&actuators);
+			setpoints.timestamp=hrt_absolute_time();
+			setpoints.timestamp_sample=hrt_absolute_time();
+			orb_publish(ORB_ID(manual_control_setpoint),manual_setpoint_pub,&setpoints);
 		}
 	}
 }

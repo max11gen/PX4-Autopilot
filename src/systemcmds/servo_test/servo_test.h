@@ -50,6 +50,7 @@
 #include <uORB/topics/vehicle_attitude_setpoint.h>
 #include <uORB/topics/ekf2_timestamps.h>
 #include <uORB/topics/vehicle_angular_acceleration.h>
+#include <uORB/topics/manual_control_setpoint.h>
 
 
 extern "C" __EXPORT int servo_test_main(int argc, char *argv[]);
