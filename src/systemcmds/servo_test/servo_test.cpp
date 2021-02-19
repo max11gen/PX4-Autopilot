@@ -200,20 +200,21 @@ ServoTest *ServoTest::instantiate(int argc, char *argv[])
 
 ServoTest::ServoTest(float roll, float pitch, float yaw, float thrust)
 	: ModuleParams(nullptr),
+	vhcl_ang_accel_sub{ORB_ID(vehicle_angular_acceleration)},
+	acturator_pub{ORB_ID(actuator_controls_0)},
 	_roll(roll), _pitch(pitch), _yaw(yaw), _thrust(thrust)
 {
-
 }
 
 void ServoTest::run()
 {
 	//int * pub_instance(nullptr);
-	int ekf_ts_sub=orb_subscribe(ORB_ID(ekf2_timestamps));
-	uORB::SubscriptionInterval ekf_ts_update_sub{ORB_ID(ekf2_timestamps), 1_s};
+	int ekf_ts_sub=orb_subscribe(ORB_ID(vehicle_angular_acceleration));
 
 	struct pollfd fds[1] {};
 	fds[0].fd = ekf_ts_sub;
 	fds[0].events=POLLIN;
+	vehicle_angular_acceleration_s accels;
 	actuator_controls_s actuators;
 	actuators.control[actuator_controls_s::INDEX_ROLL]=_roll;
 	actuators.control[actuator_controls_s::INDEX_PITCH]=_pitch;
@@ -230,10 +231,17 @@ void ServoTest::run()
 		int ret=poll(fds,1,500);
 		if(ret<0) {
 			PX4_WARN("POLL ERROR");
+		} /*else if (ret==0) {
+			PX4_INFO("RET=0");
+		} else{
+			if(actuators.timestamp>0)
+			PX4_INFO("%lu",hrt_absolute_time());
+		}*/
+		if(vhcl_ang_accel_sub.update(&accels)) {
+			actuators.timestamp=hrt_absolute_time();
+			actuators.timestamp_sample=hrt_absolute_time();
+			orb_publish(ORB_ID(actuator_controls_0),actuator_pub,&actuators);
 		}
-		actuators.timestamp=hrt_absolute_time();
-		actuators.timestamp_sample=hrt_absolute_time();
-		orb_publish(ORB_ID(actuator_controls_0),actuator_pub,&actuators);
 	}
 }
 

@@ -49,6 +49,7 @@
 #include <uORB/topics/actuator_controls.h>
 #include <uORB/topics/vehicle_attitude_setpoint.h>
 #include <uORB/topics/ekf2_timestamps.h>
+#include <uORB/topics/vehicle_angular_acceleration.h>
 
 
 extern "C" __EXPORT int servo_test_main(int argc, char *argv[]);
@@ -98,7 +99,8 @@ private:
 	*/
 
 	// Subscriptions
-	// uORB::SubscriptionInterval _parameter_update_sub{ORB_ID(parameter_update), 1_s};
+	uORB::Subscription vhcl_ang_accel_sub;
+	uORB::Publication<actuator_controls_s> acturator_pub;
 	float _roll, _pitch, _yaw, _thrust;
 };
 
