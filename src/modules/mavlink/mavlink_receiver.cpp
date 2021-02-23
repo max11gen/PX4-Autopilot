@@ -2699,7 +2699,7 @@ MavlinkReceiver::handle_message_hil_state_quaternion(mavlink_message_t *msg)
 		hil_local_pos.timestamp = timestamp;
 
 		hil_local_pos.ref_timestamp = _global_local_proj_ref.timestamp;
-		hil_local_pos.ref_lat = math::radians(_global_local_proj_ref.lat_rad);
+		hil_local_pos.ref_lat = math::degrees(_global_local_proj_ref.lat_rad);
 		hil_local_pos.ref_lon = math::radians(_global_local_proj_ref.lon_rad);
 		hil_local_pos.ref_alt = _global_local_alt0;
 		hil_local_pos.xy_valid = true;
